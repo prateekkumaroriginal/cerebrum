@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div>
       <Button>
-        Click Me
+        Click Me 
       </Button>
     </div>
   );
