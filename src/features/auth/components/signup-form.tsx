@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const signupSchema = z.object({
   email: z.email("Enter valid email address"),
@@ -66,10 +67,23 @@ export const SignupForm = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col gap-2">
-          <Button disabled={isSubmitting} variant={"secondary"}>
+          <Button disabled={isSubmitting} variant={"tertiary"}>
+            <Image
+              src="/logos/github.svg"
+              alt="GitHub"
+              height={20}
+              width={20}
+              className="invert"
+            />
             Continue with Google
           </Button>
-          <Button disabled={isSubmitting} variant={"secondary"}>
+          <Button disabled={isSubmitting} variant={"tertiary"}>
+            <Image
+              src="/logos/google.svg"
+              alt="Google"
+              height={20}
+              width={20}
+            />
             Continue with GitHub
           </Button>
         </div>
