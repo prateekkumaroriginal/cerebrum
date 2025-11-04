@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -15,18 +16,26 @@ const Page = () => {
     }
   }));
 
+  const testAi = useMutation(trpc.testAi.mutationOptions());
+
   return (
-    <div className="h-full w-full flex">
+    <div className="h-full w-full flex flex-col">
       Protected Route
       <div>
         {JSON.stringify(data)}
       </div>
-      <button
+      <Button
         onClick={() => create.mutate()}
         disabled={create.isPending}
       >
         Create
-      </button>
+      </Button>
+      <Button
+        onClick={() => testAi.mutate()}
+        disabled={testAi.isPending}
+      >
+        Generate
+      </Button>
     </div>
   );
 }
