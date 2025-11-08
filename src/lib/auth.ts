@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/db";
+import { polar, checkout, portal } from "@polar-sh/better-auth";
+import { polarClient } from "./polar";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -16,4 +18,23 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  plugins: [
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            {
+              productId: "a2dac264-0591-4986-b5ae-79ea9dd2ee00",
+              slug: "cerebrum-pro"
+            }
+          ],
+          successUrl: process.env.POLAR_SUCCESS_URL,
+          authenticatedUsersOnly: true
+        }),
+        portal()
+      ],
+    })
+  ]
 });

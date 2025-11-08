@@ -124,7 +124,7 @@ export const SignupForm = () => {
                     id="name"
                     type="text"
                     aria-invalid={fieldState.invalid}
-                    placeholder="johndoe@example.com"
+                    placeholder="John Doe"
                     autoComplete="off"
                   />
                   {fieldState.invalid && (
