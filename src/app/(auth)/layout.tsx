@@ -11,7 +11,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <Link href="/" className="flex gap-2">
         <Image
           src="/logos/logo.svg"
-          alt="Logo"
+          alt="Cerebrum Logo"
           height={60}
           width={60}
         />
