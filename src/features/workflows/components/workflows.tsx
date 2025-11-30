@@ -4,30 +4,32 @@ import {
   EmptyView,
   EntityContainer,
   EntityHeader,
+  EntityItem,
+  EntityList,
   EntityPagination,
   EntitySearch,
   ErrorView,
   LoadingView
 } from "@/components/entity-components";
-import { useCreateWorkflow, useSuspenseWorkflows } from "../hooks/use-workflows";
+import { useCreateWorkflow, useDeleteWorkflow, useSuspenseWorkflows } from "../hooks/use-workflows";
 import { useRouter } from "next/navigation";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 import { useWorkflowsParams } from "../hooks/use-workflows-params";
 import { useEntitySearch } from "@/hooks/use-entity-search";
+import { Workflow } from "@/generated/prisma";
+import { WorkflowIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 export const WorkflowsList = () => {
   const { data } = useSuspenseWorkflows();
 
-  if (!data.items.length) {
-    return (
-      <WorkflowsEmpty />
-    )
-  }
-
   return (
-    <div>
-      {JSON.stringify(data, null, 2)}
-    </div>
+    <EntityList
+      items={data.items}
+      getKey={(workflow) => workflow.id}
+      renderItem={(workflow) => <WorkflowItem {...workflow} />}
+      emptyView={<WorkflowsEmpty />}
+    />
   );
 }
 
@@ -143,4 +145,36 @@ export const WorkflowsContainer = ({ children }: { children: React.ReactNode }) 
       {children}
     </EntityContainer>
   );
+}
+
+export const WorkflowItem = ({
+  id,
+  name,
+  updatedAt,
+  createdAt
+}: Workflow) => {
+  const deleteWorkflow = useDeleteWorkflow();
+  const handleDelete = () => {
+    deleteWorkflow.mutate({ id });
+  }
+
+  return (
+    <EntityItem
+      href={`/workflows/${id}`}
+      title={name}
+      subtitle={
+        <>
+          Updated {formatDistanceToNow(updatedAt, { addSuffix: true })}{" "}
+          &bull; Created {formatDistanceToNow(createdAt, { addSuffix: true })}
+        </>
+      }
+      image={
+        <div className="size-8 flex items-center justify-center">
+          <WorkflowIcon className="size-5" />
+        </div>
+      }
+      onRemove={handleDelete}
+      isRemoving={deleteWorkflow.isPending}
+    />
+  )
 }

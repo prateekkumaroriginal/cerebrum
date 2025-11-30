@@ -14,7 +14,7 @@ export const workflowsRouter = createTRPCRouter({
         }
       });
     }),
-  remove: protectedProcedure
+  delete: protectedProcedure
     .input(z.object({
       id: z.cuid()
     }))
