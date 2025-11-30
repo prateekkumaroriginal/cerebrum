@@ -35,7 +35,7 @@ export const useDeleteWorkflow = () => {
       toast.success(`Workflow "${data.name}" deleted.`);
     },
     onError: (data) => {
-      toast.error(`Falied to delete workflow: ${data.message}`);
+      toast.error(`Failed to delete workflow: ${data.message}`);
     }
   }))
 }
