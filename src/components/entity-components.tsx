@@ -1,7 +1,8 @@
-import { PlusCircleIcon, SearchIcon } from "lucide-react";
+import { AlertTriangleIcon, Loader2Icon, PackageOpenIcon, PlusCircleIcon, SearchIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Input } from "./ui/input";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./ui/empty";
 
 type EntityHeaderProps = {
   title: string;
@@ -130,7 +131,7 @@ export const EntityPagination = ({
   return (
     <div className="flex items-center justify-between gap-x-2 w-full">
       <div className="flex-1 text-sm text-muted-foreground">
-        Page {page} of {totalPages ?? 1}
+        Page {page} of {totalPages || 1}
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
@@ -151,5 +152,72 @@ export const EntityPagination = ({
         </Button>
       </div>
     </div>
+  )
+}
+
+interface StateViewProps {
+  message?: string;
+}
+
+export const LoadingView = ({
+  message
+}: StateViewProps) => {
+  return (
+    <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
+      <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
+      {!!message && (
+        <p className="text-sm text-muted-foreground">
+          {message}
+        </p>
+      )}
+    </div>
+  )
+}
+
+export const ErrorView = ({
+  message
+}: StateViewProps) => {
+  return (
+    <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
+      <AlertTriangleIcon className="size-6 text-red-500" />
+      {!!message && (
+        <p className="text-sm text-muted-foreground">
+          {message}
+        </p>
+      )}
+    </div>
+  )
+}
+
+interface EmptyViewProps extends StateViewProps {
+  onNew?: () => void;
+}
+
+export const EmptyView = ({
+  message,
+  onNew
+}: EmptyViewProps) => {
+  return (
+    <Empty className="border border-dashed bg-white">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <PackageOpenIcon />
+        </EmptyMedia>
+        <EmptyTitle>No Items Found</EmptyTitle>
+        {!!message && (
+          <EmptyDescription>
+            {message}
+          </EmptyDescription>
+        )}
+      </EmptyHeader>
+      {!!onNew && (
+        <EmptyContent>
+          <Button
+            onClick={onNew}
+          >Add Item
+          </Button>
+        </EmptyContent>
+      )}
+    </Empty>
   )
 }
