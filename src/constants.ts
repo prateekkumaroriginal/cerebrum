@@ -1,5 +1,6 @@
 export const MESSAGES = {
-  SOMETHING_WENT_WRONG: "Something Went Wrong!"
+  SOMETHING_WENT_WRONG: "Something Went Wrong!",
+  MINIMUM_WORKFLOW_NAME_ERROR: "Name must be at least 2 characters!"
 }
 
 export const PAGINATION = {

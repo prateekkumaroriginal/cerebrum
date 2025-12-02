@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { MESSAGES } from "@/constants";
 import { useSuspenseWorkflow, useUpdateWorkflowName } from "@/features/workflows/hooks/use-workflows";
-import { SaveIcon } from "lucide-react";
+import { PencilIcon, SaveIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface EditorHeaderProps {
   workflowId: string;
@@ -48,8 +50,13 @@ export const EditorNameInput = ({ workflowId }: EditorHeaderProps) => {
   }, [isEditing]);
 
   const handleSave = async () => {
-    if (name === workflow.name || name.length < 2) {
+    if (name === workflow.name) {
       setIsEditing(false);
+      return;
+    }
+
+    if (name.length < 2) {
+      toast.error(MESSAGES.MINIMUM_WORKFLOW_NAME_ERROR);
       return;
     }
 
@@ -89,7 +96,7 @@ export const EditorNameInput = ({ workflowId }: EditorHeaderProps) => {
         {name.length < 2 && (
           <FieldError
             className="absolute -bottom-4 text-xs"
-            errors={[{ message: "Name must be at least 2 characters!" }]}
+            errors={[{ message: MESSAGES.MINIMUM_WORKFLOW_NAME_ERROR }]}
           />
         )}
       </div>
@@ -97,9 +104,13 @@ export const EditorNameInput = ({ workflowId }: EditorHeaderProps) => {
   }
 
   return (
-    <BreadcrumbItem onClick={() => setIsEditing(true)}>
-      <BreadcrumbPage>
+    <BreadcrumbItem
+      onClick={() => setIsEditing(true)}
+      className="cursor-pointer"
+    >
+      <BreadcrumbPage className="flex gap-x-2 items-center">
         {workflow.name}
+        <PencilIcon className="size-3" />
       </BreadcrumbPage>
     </BreadcrumbItem>
   )
