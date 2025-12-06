@@ -1,4 +1,6 @@
 import { PAGINATION } from "@/constants";
+import type { Connection, Node } from "@/generated/prisma/client";
+import { NodeType } from "@/generated/prisma/enums";
 import prisma from "@/lib/db";
 import { createTRPCRouter, premiumProcedure, protectedProcedure } from "@/trpc/init";
 import { generateSlug } from "random-word-slugs";
@@ -10,7 +12,14 @@ export const workflowsRouter = createTRPCRouter({
       return prisma.workflow.create({
         data: {
           name: generateSlug(3),
-          userId: ctx.auth.user.id
+          userId: ctx.auth.user.id,
+          nodes: {
+            create: {
+              name: NodeType.INITIAL,
+              type: NodeType.INITIAL,
+              position: { x: 0, y: 0 }
+            }
+          }
         }
       });
     }),
@@ -46,13 +55,27 @@ export const workflowsRouter = createTRPCRouter({
     .input(z.object({
       id: z.cuid()
     }))
-    .query(({ ctx, input }) => {
-      return prisma.workflow.findUniqueOrThrow({
+    .query(async ({ ctx, input }) => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
         where: {
           id: input.id,
           userId: ctx.auth.user.id
+        },
+        include: {
+          nodes: true,
+          connections: true
         }
       });
+
+      const nodes = getCompatibleNodes(workflow.nodes);
+      const edges = getCompatibleEdges(workflow.connections);
+
+      return {
+        id: workflow.id,
+        name: workflow.name,
+        nodes,
+        edges
+      }
     }),
   getMany: protectedProcedure
     .input(z.object({
@@ -108,3 +131,22 @@ export const workflowsRouter = createTRPCRouter({
       }
     })
 });
+
+const getCompatibleNodes = (nodes: Node[]) => (
+  nodes.map((node) => ({
+    id: node.id,
+    type: node.type,
+    position: node.position as { x: number, y: number },
+    data: (node.data as Record<string, unknown>) || {}
+  }))
+)
+
+const getCompatibleEdges = (connections: Connection[]) => (
+  connections.map((connection) => ({
+    id: connection.id,
+    source: connection.fromNodeId,
+    target: connection.toNodeId,
+    sourcehandle: connection.fromOutput,
+    targetHandle: connection.toInput
+  }))
+);

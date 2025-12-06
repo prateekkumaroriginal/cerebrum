@@ -1,5 +1,4 @@
 import { inngest } from "@/inngest/client";
-import prisma from "@/lib/db";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { createAnthropic } from '@ai-sdk/anthropic';
